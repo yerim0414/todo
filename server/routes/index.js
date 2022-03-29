@@ -7,6 +7,8 @@ const router = express.Router();
  */
 const toDoController = require("../controllers/toDoController")
     router.get("/api/getList",        toDoController.findAll);
+    router.get("/api/getAllList",     toDoController.findAllList);
+    router.post("/api/addList",       toDoController.addList);
 
 router.get('/', (req, res) => {
     res.send('404 . Not Found!')

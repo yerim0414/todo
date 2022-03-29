@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="itemBox" v-for="(element) in items" :key="element.id">
+    <div class="itemBox" v-for="(element) in values" :key="element.id">
       <div class="itemHeader">
         <div class="title">
           {{element.name}}
@@ -49,7 +49,7 @@
         <input v-model="addTitle" type="text" placeholder="Enter list title...">
       </div>
       <div>
-        <button class="addBtn">Add List</button> 
+        <button class="addBtn" v-on:click="addData">Add List</button> 
         <span @click="addMode=0" class="cancleBtn">✖</span>
       </div>
     </div>
@@ -67,7 +67,12 @@ export default {
   },
   data() {
     return {
+      addTitle:'',
       addMode: 0,
+      values : [{
+        rows:[]
+        }
+      ],
       items: [
         {
           id:1,
@@ -104,7 +109,32 @@ export default {
   methods: {
     getDataLoad(){
       console.log("start")
+      this.values = []
+      todoApi.getList().then(res =>{
+        // console.log(res.data);
+        res.data.forEach(element =>{
+
+          console.log(element);
+          this.values.push(element);
+          }
+        )
+      });
     },
+    addData : function(event) {
+      // alert(this.addTitle)
+      if(this.addTitle){
+        this.insertData(this.addTitle)
+      }
+    },
+    insertData(title){
+      const data = {
+        "TODO_TITLE" : title
+      }
+      todoApi.addList(data).then(res => {
+        console.log(res);
+      })
+
+    }
   },
   created() {
     this.getDataLoad()
