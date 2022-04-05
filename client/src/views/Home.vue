@@ -20,7 +20,7 @@
         </div>
       </div>
       <div class="itemFooter">
-        <div class="btnBox" v-if="element.mode==0" @click="element.mode=1">
+        <div class="btnBox" v-if="element.mode==0" @click="element.mode=1, test=element.id">
           <div class="btn">
           + Add another card
           </div>
@@ -30,10 +30,10 @@
         </div>
         <div class="regBox" style="padding:0px; mn" v-if="element.mode==1">
           <div>
-            <input v-model="element.addCardTitle" type="text" placeholder="Enter item title for list...">
+            <input v-model="addCardTitle" type="text" placeholder="Enter item title for list...">
           </div>
           <div>
-            <button class="addBtn">Add Card</button>
+            <button class="addBtn" @click="addCard">Add Card</button>
             <span class="cancleBtn" @click="element.mode=0">✖</span>
           </div>
         </div>
@@ -68,59 +68,30 @@ export default {
   data() {
     return {
       addTitle:'',
+      addCardTitle:'',
+      test:0,
       addMode: 0,
       values : [{
         rows:[]
         }
       ],
-      items: [
-        {
-          id:1,
-          name:'Vue Begginer',
-          rows:[
-            {
-              id:1,
-              name:'대광'
-            },
-            {
-              id:2,
-              name:'예림'
-            }
-          ]
-        },
-        {
-          id:2,
-          name:'Node Begginer',
-          rows:[
-            {
-              id:1,
-              name:'대광'
-            },
-            {
-              id:2,
-              name:'예림'
-            }
-          ]
-        }
-
-      ]
     } 
   },
   methods: {
     getDataLoad(){
-      console.log("start")
+      // console.log("start")
       this.values = []
       todoApi.getList().then(res =>{
         // console.log(res.data);
         res.data.forEach(element =>{
 
-          console.log(element);
+          // console.log(element);
           this.values.push(element);
           }
         )
       });
     },
-    addData : function(event) {
+    addData : function(event) { //데이터 추가
       // alert(this.addTitle)
       if(this.addTitle){
         this.insertData(this.addTitle)
@@ -134,6 +105,30 @@ export default {
         console.log(res);
       })
 
+    },
+    addCard:function(event){
+      // console.log(this.test)
+      // alert(this.addCardTitle)
+      if(this.addCardTitle){
+        this.insertCard(this.addCardTitle, this.test)
+
+      }
+    },
+    insertCard(card, seq){
+      const data = {
+        "CARD_CONTENT" : card,
+        "TODO_SEQ" : seq,
+      }
+      todoApi.addCard(data).then(res => {
+        console.log(res)
+        this.getDataLoad()
+        this.addCardTitle = ''
+      })
+    },
+
+    remove(){ //내용 삭제
+      // Vue.delete(this.addCardTitle);
+       this.addCardTitle = ''
     }
   },
   created() {

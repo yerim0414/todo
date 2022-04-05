@@ -25,3 +25,11 @@ export async function addList(data){
         return err;
     }
 }
+
+export async function addCard(data){
+    try{
+        return http.post('/api/addCard',data);
+    }catch(err){
+        return err;
+    }
+}

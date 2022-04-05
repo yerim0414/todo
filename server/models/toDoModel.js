@@ -1,7 +1,7 @@
 const { response } = require("express");
 const db = require("../lib/database")
-
-exports.findAllList = async function(){
+//MODEL
+exports.findAllList = async function(){ //모든 리스트
     try{
         let sql = `SELECT * FROM TODO_LIST WHERE TODO_DEL_YN = 'N'`;
         let result = [];
@@ -127,9 +127,24 @@ exports.getAllNode = async function(todoSeq){
 
 }
 
-exports.addList = async function(data){
+exports.addList = async function(data){ //새 리스트 추가 (큰 틀)
     var sql ="INSERT INTO TODO_LIST (TODO_TITLE) values (?)";
     var PARAMS =[data.TODO_TITLE]
+    db.query(sql,PARAMS, function(error, resultData){
+        if(error){
+            return error
+        }else{
+            response.json(resultData)
+        }
+    })
+}
+
+exports.addCard = async function(data){ //새 카드 목록 추가(리스트 안에 내용)
+    var sql ="INSERT INTO TODO_CARD_LIST (CARD_CONTENT, TODO_SEQ) values (?, ?)";
+    var PARAMS =[
+        data.CARD_CONTENT,
+        data.TODO_SEQ
+    ]
     db.query(sql,PARAMS, function(error, resultData){
         if(error){
             return error

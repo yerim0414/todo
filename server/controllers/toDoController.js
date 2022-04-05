@@ -12,12 +12,22 @@ const findAllList = async function(req, res) {
     res.status(200).json(result);
 }
 
-const addList = async function(req, res) {
+const addList = async function(req, res) { //리스트 추가
     console.log(req.body);
     const data ={
         "TODO_TITLE" : req.body.TODO_TITLE,
     }
     let result = await ToDo.addList(data);
+    res.status(200).json(result);
+}
+
+const addCard = async function(req, res){ //카드추가(리스트 안에 내용)
+    console.log(req.body);
+    const data ={
+        "CARD_CONTENT" : req.body.CARD_CONTENT,
+        "TODO_SEQ" : req.body.TODO_SEQ
+    }
+    let result = await ToDo.addCard(data);
     res.status(200).json(result);
 }
 
@@ -31,5 +41,6 @@ const addList = async function(req, res) {
 module.exports = {
     findAll,
     findAllList,
-    addList
+    addList,
+    addCard,
 }
