@@ -33,3 +33,11 @@ export async function addCard(data){
         return err;
     }
 }
+
+export async function updateTodoSeq(data){
+    try{
+        return http.post('/api/updateTodoSeq', data);
+    }catch(err){
+
+    }
+}

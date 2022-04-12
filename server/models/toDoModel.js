@@ -27,7 +27,6 @@ exports.findAll = async function(){
         let result = [];
         let [todoList, fields] = await db.query(sql);
         for (let todo of todoList){
-            // sql = `SELECT * FROM TBL_CARD_LIST WHERE CL_DEL_YN = 'N' AND CL_PARENT_SEQ = ${todo.TL_SEQ}` ;
             let listData = {
                 id: todo.TODO_SEQ,
                 mode: 0,            // 0: 기본 값, 1: 쓰기 모드
@@ -37,13 +36,12 @@ exports.findAll = async function(){
             }
             
             let cardList = await this.getAllNode(todo.TODO_SEQ);
-            // console.log(cardList);
-            // let [cardList, cardFields] = await db.query(sql);
             for (let card of cardList){
                 let cardData = {
                     id: card.CARD_SEQ,
                     mouseOver: 0,   // 마우스오버 이벤트 제어변수
                     name: card.CARD_CONTENT,
+                    todo_seq : card.TODO_SEQ
                 }
                 listData.rows.push(cardData);
             }   
@@ -55,42 +53,6 @@ exports.findAll = async function(){
         return e
     }
 }
-
-
-// exports.findAll = async function(){
-//     try {
-//         let sql = `SELECT * FROM TODO_LIST WHERE TODO_DEL_YN = 'N'`;
-//         let result = [];
-//         let [todoList, fields] = await db.query(sql);
-//         for (let todo of todoList){
-//             // sql = `SELECT * FROM TBL_CARD_LIST WHERE CL_DEL_YN = 'N' AND CL_PARENT_SEQ = ${todo.TL_SEQ}` ;
-//             let listData = {
-//                 id: todo.TODO_SEQ,
-//                 mode: 0,            // 0: 기본 값, 1: 쓰기 모드
-//                 addCardTitle: "",   // 입력된 데이터를 받을 변수 선언
-//                 name: todo.TODO_TITLE,
-//                 rows: []
-//             }
-            
-//             // let cardList = await this.getAllNode(todo.TODO_SEQ);
-//             // console.log(cardList);
-//             // let [cardList, cardFields] = await db.query(sql);
-//             // for (let card of cardList){
-//             //     let cardData = {
-//             //         id: card.CARD_SEQ,
-//             //         mouseOver: 0,   // 마우스오버 이벤트 제어변수
-//             //         name: card.CARD_CONTENT,
-//             //     }
-//             //     // listData.rows.push(cardData);
-//             // }   
-//             result.push(listData)        
-//         }
-
-//         return result;
-//     } catch(e) {
-//         return e
-//     }
-// }
 
 exports.getAllNode = async function(todoSeq){
     try {
@@ -145,6 +107,18 @@ exports.addCard = async function(data){ //새 카드 목록 추가(리스트 안
         data.CARD_CONTENT,
         data.TODO_SEQ
     ]
+    db.query(sql,PARAMS, function(error, resultData){
+        if(error){
+            return error
+        }else{
+            response.json(resultData)
+        }
+    })
+}
+
+exports.updateTodoSeq = async function(data){ //카드seq변경(drag)
+    var sql ="UPDATE TODO_CARD_LIST SET TODO_SEQ = ? WHERE CARD_SEQ = ?";
+    var PARAMS = [data.TODO_SEQ, data.CARD_SEQ]
     db.query(sql,PARAMS, function(error, resultData){
         if(error){
             return error

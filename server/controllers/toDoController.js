@@ -31,6 +31,16 @@ const addCard = async function(req, res){ //카드추가(리스트 안에 내용
     res.status(200).json(result);
 }
 
+const updateTodoSeq = async function(req, res){ //카드seq변경(drag)
+    console.log(req.body);
+    const data ={
+        "CARD_SEQ" : req.body.CARD_SEQ,
+        "TODO_SEQ" : req.body.TODO_SEQ
+    }
+    let result = await ToDo.updateTodoSeq(data);
+    res.status(200).json(result);
+}
+
 /**
  * 
  * @param {*} todoSeq 
@@ -43,4 +53,5 @@ module.exports = {
     findAllList,
     addList,
     addCard,
+    updateTodoSeq,
 }

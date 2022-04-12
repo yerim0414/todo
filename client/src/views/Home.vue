@@ -11,12 +11,14 @@
       </div>
       <div class="itemBody">  
         <div class="dragable">
+        <draggable :list="element.rows" draggable=".item" group="values" @change="onChange($event, element.id)">
           <div class="item" v-for="(item) in element.rows" :key="item.id">
             <div>{{item.name}}</div>
-            <div class="edit">
+            <div class="edit" @click="editCard">
               <div><font-awesome-icon icon="fa-regular fa-edit"/></div>
             </div>
           </div>
+          </draggable>
         </div>
       </div>
       <div class="itemFooter">
@@ -89,6 +91,7 @@ export default {
           this.values.push(element);
           }
         )
+        console.log(this.values);
       });
     },
     addData : function(event) { //데이터 추가
@@ -103,6 +106,8 @@ export default {
       }
       todoApi.addList(data).then(res => {
         console.log(res);
+        this.getDataLoad()
+        this.addTitle = ''
       })
 
     },
@@ -126,9 +131,27 @@ export default {
       })
     },
 
-    remove(){ //내용 삭제
-      // Vue.delete(this.addCardTitle);
-       this.addCardTitle = ''
+    onChange(event, group) { //card 드래그시 TODO_SEQ 변경
+      if(event.added){ //다른 list로 card 추가시
+        const value = event.added.element;
+        this.updateTodoSeq(value.id, group);
+      }
+    },
+    updateTodoSeq(cardseq, todoseq){
+        // console.log(cardseq)//seq
+        // console.log(todoseq) //바뀌는 todo_seq
+        const data = {
+          "CARD_SEQ" : cardseq,
+          "TODO_SEQ" : todoseq,
+        }
+        todoApi.updateTodoSeq(data).then(res => {
+          console.log(res)
+          this.getDataLoad()
+        })
+    },
+
+    editCard(e){
+      console.log(e);
     }
   },
   created() {
